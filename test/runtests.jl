@@ -2,12 +2,13 @@ using Test
 using Mocca
 using Jutul
 using JutulDarcy
-using MAT
 using LinearAlgebra
 using StaticArrays
 
 @testset "Mocca.jl Tests" begin
-
+    @testset "Input Parsing" begin
+        include("data_input.jl")
+    end
     @testset "Adsorption Systems" begin
         include("adsorption_systems.jl")
     end

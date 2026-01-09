@@ -1,5 +1,6 @@
 using Parameters
 abstract type ConstantsStruct end
+abstract type InfoStruct end
 
 @with_kw struct HaghpanahConstants{RealT} <: ConstantsStruct
     molecularMassOfCO2::RealT = 44.01e-3 # kg / mole
@@ -19,6 +20,7 @@ abstract type ConstantsStruct end
     "Particle diameter [m]"
     d_p::RealT = 2e-3
 
+    "Interstitial velocity"
     V0_inter::RealT = 1.0
 
     fluid_viscosity::RealT = 1.72e-5
@@ -84,9 +86,127 @@ abstract type ConstantsStruct end
 
 end
 
-#function HaghpanahConstants(; kwarg...)
-#    HaghpanahConstants{Float64}(; kwarg...)
-#end
+@with_kw mutable struct adsorptionConstants{RealT} <: ConstantsStruct
+     
+    # Physical constants
+    molecularMassOfCO2::RealT
+    molecularMassOfN2::RealT
+    R::RealT #
+    Φ::RealT # Porosity of the bed
+
+    # Dual-site Langmuir adsorption isotherm parameters
+    b0::SVector{2,RealT}
+    d0::SVector{2,RealT}
+    ΔUbi::SVector{2,RealT}
+    ΔUdi::SVector{2,RealT}
+    qsbi::SVector{2,RealT}
+    qsdi::SVector{2,RealT}
+
+    # Adsorbent properties
+    ϵ_p::RealT
+    D_m::RealT
+    τ::RealT
+    "Particle diameter [m]"
+    d_p::RealT
+    "Density of adsorbent, [kg m^{-3}]"
+    ρ_s::RealT
+    "Specific heat capacity of solid adsorbent [J kg^{-1}K^{-1}]"
+    C_ps::RealT
+    "Interstitial velocity"
+    V0_inter::RealT
+
+    # Feed parameters
+    fluid_viscosity::RealT
+    "[W/m/K]"
+    K_z::RealT
+    "[W/m/K]"
+    K_w::RealT
+
+    "Density of gas, [kg m^{-3}]"
+    ρ_g::RealT
+
+    "Specific heat capacity per component for fluid phase [J kg^{-1}K^{-1}]"
+    C_pg::SVector{2,RealT}
+    "Specific heat capacity per component for adsorbent phase [J kg^{-1}K^{-1}]"
+    C_pa::SVector{2,RealT}
+   
+    "Column radius [m]"
+    r_in::RealT
+    "Wall radius [m]"
+    r_out::RealT
+    "Heat transfer coefficient from column to wall [Wm^{-2}K^{-1}]"
+    h_in::RealT
+    "Heat transfer coefficient from wall to outside [Wm^{-2}K^{-1}]"
+    h_out::RealT
+    "Density of wall medium [kg m^{-3}]"
+    ρ_w::RealT
+    "Specific heat capacity for the wall [J kg^{-1}K^{-1}]"
+    C_pw::RealT
 
 
-# axial_dispersion(p::HaghpanahConstants) = 0.7 * p.D_m + 0.5 * p.V0_inter * p.d_p
+    "Ambient temperature [K]"
+    T_a::RealT
+
+    # BC Stuff
+    "Fluid velocity of feed gas [m s^{-1}]"
+    v_feed::RealT
+
+    "Mole fraction of the components [-]"
+    y_feed::SVector{2,RealT}
+
+    "p_high High pressure [Pa]"
+    p_high::RealT
+
+    "Intermediate pressure [Pa]"
+    p_intermediate::RealT
+
+    "Low pressure [Pa]"
+    p_low::RealT
+
+    "Pressure BC parameter [s^{-1}]"
+    λ::RealT
+
+    "Feed temperature [K]"
+    T_feed::RealT
+
+    "Column length [m]"
+    L::RealT
+
+    # Initial conditions
+    "Initial pressure [Pa]"
+    P_init::RealT
+    
+    "Initial temperature [K]"
+    T0::RealT
+
+    "Initial wall temperature [K]"
+    Tw_init::RealT
+
+    "Initial mole fractions of CO2 [-]"
+    y_init::SVector{2,RealT}
+
+end
+
+
+
+@with_kw mutable struct processInfo <: InfoStruct
+
+    # Process specification
+    stage_types::Vector{String}
+    stage_durations::Vector{Float64}
+    num_cycles::Int
+
+
+    # Simulation parameters
+    system_type::String
+    ncells::Int
+    maxdt::Float64
+
+    timestep_selectors::Dict{String, Any}
+
+    # Solver parameters
+    linear_solver::String
+    info_level::Int
+
+end
+

@@ -75,3 +75,9 @@ The authors would like to thank Shreenath Krishnamurthy, SINTEF Industry and Gok
 This project has received funding from the following projects:
 - SINTEF Digital Strategic Development Fund
 - FME gigaCCS administered by the Research Council of Norway (350370). 
+
+
+# Python Port
+
+This repository now also includes a complete Python implementation under `python/` with package metadata in `pyproject.toml`.
+Install with `pip install -e .` and run `python python/examples/quick_start.py`.
